@@ -1,0 +1,42 @@
+{
+  "name": "nmr-auto-assignmnet",
+  "version": "0.0.1",
+  "description": "Automatic assignment for Nuclear Magnetic Resonance spectra for small molecules ",
+  "keywords": [
+    "NMR",
+    "spectra",
+    "assignment",
+    "automatic",
+    "molecules"
+  ],
+  "author": "Andres Castillo",
+  "repository": "cheminfo-js/nmr-auto-assignmnet",
+  "bugs": {
+    "url": "https://github.com/cheminfo-js/nmr-auto-assignmnet/issues"
+  },
+  "homepage": "https://github.com/cheminfo-js/nmr-auto-assignmnet",
+  "license": "MIT",
+  "main": "./src/index.js",
+  "directories": {
+    "lib": "src",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha --require should --reporter mocha-better-spec-reporter --recursive",
+    "build": "cheminfo build"
+  },
+  "devDependencies": {
+    "cheminfo-tools": "^1.0.2",
+    "mocha": "^2.2.5",
+    "mocha-better-spec-reporter": "^2.1.1",
+    "should": "^7.0.2"
+  },
+  "dependencies": {
+    "jcampconverter": "^2.0.8",
+    "ml-stat": "^1.0.1",
+    "ml-matrix": "^0.1.0",
+    "ml-gsd": "0.1.0",
+    "ml-fft": "1.0.5",
+    "extend": "^3.0.0"
+  }
+}
