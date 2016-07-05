@@ -9,32 +9,13 @@ class Predictor1H{
         this.db =db;//File.loadJSON("../h1_database.json");
     }
 
-    predictFromSpinus(molfile){
-        request.post("http://www.nmrdb.org/service/predictor",{form:{molfile:molfile}},function(error, response, body){
-            return body;
-        });
-    }
-
-    predictFromAskErno(molfile, options){
-        var currentDB = null;
-        var options = options || {};
-        if (options.db) {
-            currentDB = options.db;
-        }
-        else {
-            if(!this.db)
-                currentDB =[[],[],[],[],[],[],[]];
-        }
-    }
-
-}
     /**
      * @function nmrShiftDBPred1H(molfile)
      * This function predict shift for 1H-NMR, from a molfile by using the cheminfo reference data base.
      * @param    molfile:string    A molfile content
      * @returns    +Object an array of NMRSignal1D
      */
-    function nmrShiftDBPred(molfile, options) {
+    nmrShiftDBPred(molfile, options) {
         var currentDB = null;
         var options = options || {};
         if (options.db) {
@@ -63,7 +44,7 @@ class Predictor1H{
 
         var infoCOSY = [];//mol.getCouplings();
         if(couplings){
-        //    infoCOSY = mol.predictCouplings();
+            //    infoCOSY = mol.predictCouplings();
         }
 
         var atoms = {};
@@ -95,13 +76,7 @@ class Predictor1H{
                 k++;
             }
             if (res == null) {
-                res = {
-                    cs: -9999999,
-                    ncs: 0,
-                    std: 0,
-                    min: 0,
-                    max: 0
-                };
+                res = { cs: -9999999, ncs: 0, std: 0, min: 0, max: 0 };//Default values
             }
             atom.level = levels[k-1];
             atom.delta = res.cs;
@@ -126,11 +101,10 @@ class Predictor1H{
 
             toReturn[j]=atom;
         }
-
+        //TODO this will not work because getPaths is not implemented yet!!!!
         if(options.ignoreLabile){
             var linksOH = mol.getPaths(1,1,"H","O",false);
             var linksNH = mol.getPaths(1,1,"H","N",false);
-            //console.log(h1pred.length);
             for(j=toReturn.length-1;j>=0;j--){
                 for(var k=0;k<linksOH.length;k++){
                     if(toReturn[j].diaIDs[0]==linksOH[k].diaID1){
@@ -152,5 +126,8 @@ class Predictor1H{
 
         return toReturn;
     }
+
+}
+
 
 module.exports = nmrShiftDBPred;
