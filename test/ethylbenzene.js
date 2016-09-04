@@ -37,7 +37,6 @@ describe('Auto-assignment ethylbenzene', function () {
         }
         return a.element<b.element?1:-1;
     });
-    //var diaID = molecule.getIDCode();
     const predictor = new Predictor(JSON.parse(loadFile("/../src/h1_database.json")));
 
     var spectrum = createSpectraData("/data/ethylbenzene/z1h_0.jdx");
@@ -50,13 +49,20 @@ describe('Auto-assignment ethylbenzene', function () {
         idPrefix: "1H",
         format:"new"
     });
-    //console.log(peakPicking);
-    //console.log("PP", spectrum.sd.spectra[0].data);
+
     it('Known patterns for ethylbenzene', function () {
         var result = autoassigner({molecule:molecule, diaIDs:diaIDs,
             spectra:{h1PeakList:peakPicking, solvent:spectrum.getParamString(".SOLVENT NAME", "unknown")}},
             {predictor:predictor}
         );
-        console.log(JSON.stringify(result));
+        //console.log(JSON.stringify(result));
+    });
+
+    it('condensed for ethylbenzene', function () {
+        var result = autoassigner({molecule:molecule, diaIDs:diaIDs,
+                spectra:{h1PeakList:peakPicking, solvent:spectrum.getParamString(".SOLVENT NAME", "unknown")}},
+                {minScore:1 ,maxSolutions:3000, errorCS:-1 , predictor: predictor, condensed:true}
+        );
+        //console.log(JSON.stringify(result));
     });
 });

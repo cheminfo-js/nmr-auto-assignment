@@ -57,6 +57,6 @@ describe('Auto-assignment ethylvinylether', function () {
                 spectra:{h1PeakList:peakPicking, solvent:spectrum.getParamString(".SOLVENT NAME", "unknown")}},
             {predictor:predictor}
         );
-        console.log(JSON.stringify(result));
+        //console.log(JSON.stringify(result));
     });
 });

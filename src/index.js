@@ -4,7 +4,7 @@
 const SpinSystem = require('./SpinSystem');
 const AutoAssigner = require('./AutoAssigner');
 
-function autoAssign(entry, options){
+function autoAssign(entry, options) {
     if(entry.spectra.h1PeakList){
         return assignmentFromPeakPicking(entry, options);
     }
@@ -13,7 +13,7 @@ function autoAssign(entry, options){
     }
 }
 
-function assignmentFromRaw(entry, options){
+function assignmentFromRaw(entry, options) {
     var molfile = entry.molfile;
     var spectra = entry.spectra;
 
@@ -93,7 +93,7 @@ function assignmentFromPeakPicking(entry, options) {
 
     try{
         const spinSystem = new SpinSystem(h1pred, spectra.h1PeakList);
-        const autoAssigner = new AutoAssigner(spinSystem, {minScore:1 ,maxSolutions:3000, errorCS:-1});
+        const autoAssigner = new AutoAssigner(spinSystem, options);
         return autoAssigner.getAssignments();
     }
     catch(e){
