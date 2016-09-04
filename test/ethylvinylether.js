@@ -32,10 +32,10 @@ describe('Auto-assignment ethylvinylether', function () {
         diaIDs[j].nbEquivalent=diaIDs[j].atoms.length;
     }
     diaIDs.sort(function(a,b) {
-        if (a.element==b.element) {
+        if (a.atomLabel==b.atomLabel) {
             return b.nbEquivalent-a.nbEquivalent;
         }
-        return a.element<b.element?1:-1;
+        return a.atomLabel<b.atomLabel?1:-1;
     });
     //var diaID = molecule.getIDCode();
     const predictor = new Predictor(JSON.parse(loadFile("/../src/h1_database.json")));

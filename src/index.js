@@ -3,6 +3,8 @@
  */
 const SpinSystem = require('./SpinSystem');
 const AutoAssigner = require('./AutoAssigner');
+const OCLE = require("openchemlib-extended");
+
 
 function autoAssign(entry, options) {
     if(entry.spectra.h1PeakList){
@@ -14,15 +16,16 @@ function autoAssign(entry, options) {
 }
 
 function assignmentFromRaw(entry, options) {
-    var molfile = entry.molfile;
+    //TODO Implement this method
+    /*var molfile = entry.molfile;
     var spectra = entry.spectra;
 
-    var molecule=ACT.load(molfile);
+    var molecule =  OCLE.Molecule.fromMolfile(molfile);
 
-    molecule.expandHydrogens();
+    molecule.addImplicitHydrogens();
 
     entry.molecule = molecule;
-    entry.diaIDs = molecule.getDiastereotopicAtomIDs();
+    entry.diaIDs = molecule.getGroupedDiastereotopicAtomIDs();
 
     //Simulate and process the 1H-NMR spectrum at 400MHz
     var jcampFile = molFiles[i].replace("mol_","h1_").replace(".mol",".jdx");
@@ -42,6 +45,7 @@ function assignmentFromRaw(entry, options) {
     spectra.h1PeakList = signals;
 
     return assignmentFromPeakPicking(entry,options);
+    */
 }
 
 function assignmentFromPeakPicking(entry, options) {
@@ -50,23 +54,23 @@ function assignmentFromPeakPicking(entry, options) {
 
     var spectra = entry.spectra;
     if(!entry.molecule) {
-        molecule=ACT.load(entry.molfile);
-        molecule.expandHydrogens();
-        diaIDs=molecule.getDiastereotopicAtomIDs();
+        molecule = OCLE.Molecule.fromMolfile(entry.molfile);
+        molecule.addImplicitHydrogens();
+        diaIDs=molecule.getGroupedDiastereotopicAtomIDs();
 
         for (var j = 0; j < diaIDs.length; j++) {
             diaIDs[j].nbEquivalent=diaIDs[j].atoms.length;
         }
 
         diaIDs.sort(function(a,b) {
-            if (a.element == b.element) {
+            if (a.atomLabel == b.atomLabel) {
                 return b.nbEquivalent-a.nbEquivalent;
             }
-            return a.element<b.element?1:-1;
+            return a.atomLabel<b.atomLabel?1:-1;
         });
         entry.molecule = molecule;
         entry.diaIDs = diaIDs;
-        entry.diaID = molecule.toIDCode();
+        entry.diaID = molecule.getIDCode();
     }
     else {
         molecule = entry.molecule;

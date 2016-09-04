@@ -31,11 +31,12 @@ describe('Auto-assignment ethylbenzene', function () {
     for (var j=0; j<diaIDs.length; j++) {
         diaIDs[j].nbEquivalent=diaIDs[j].atoms.length;
     }
+    //console.log(diaIDs);
     diaIDs.sort(function(a,b) {
-        if (a.element==b.element) {
+        if (a.atomLabel==b.atomLabel) {
             return b.nbEquivalent-a.nbEquivalent;
         }
-        return a.element<b.element?1:-1;
+        return a.atomLabel<b.atomLabel?1:-1;
     });
     const predictor = new Predictor(JSON.parse(loadFile("/../src/h1_database.json")));
 
@@ -62,6 +63,14 @@ describe('Auto-assignment ethylbenzene', function () {
         var result = autoassigner({molecule:molecule, diaIDs:diaIDs,
                 spectra:{h1PeakList:peakPicking, solvent:spectrum.getParamString(".SOLVENT NAME", "unknown")}},
                 {minScore:1 ,maxSolutions:3000, errorCS:-1 , predictor: predictor, condensed:true}
+        );
+        //console.log(JSON.stringify(result));
+    });
+
+    it('condensed for ethylbenzene from molfile', function () {
+        var result = autoassigner({molfile: molfile,
+                spectra:{h1PeakList:peakPicking, solvent:spectrum.getParamString(".SOLVENT NAME", "unknown")}},
+            {minScore:1 ,maxSolutions:3000, errorCS:-1 , predictor: predictor, condensed:true}
         );
         //console.log(JSON.stringify(result));
     });
