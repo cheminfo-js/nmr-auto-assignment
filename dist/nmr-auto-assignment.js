@@ -60,7 +60,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	const SpinSystem = __webpack_require__(1);
 	const AutoAssigner = __webpack_require__(2);
 
-	function autoAssign(entry, options){
+	function autoAssign(entry, options) {
 	    if(entry.spectra.h1PeakList){
 	        return assignmentFromPeakPicking(entry, options);
 	    }
@@ -69,7 +69,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	}
 
-	function assignmentFromRaw(entry, options){
+	function assignmentFromRaw(entry, options) {
 	    var molfile = entry.molfile;
 	    var spectra = entry.spectra;
 
@@ -149,7 +149,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    try{
 	        const spinSystem = new SpinSystem(h1pred, spectra.h1PeakList);
-	        const autoAssigner = new AutoAssigner(spinSystem, {minScore:1 ,maxSolutions:3000, errorCS:-1});
+	        const autoAssigner = new AutoAssigner(spinSystem, options);
 	        return autoAssigner.getAssignments();
 	    }
 	    catch(e){
@@ -398,7 +398,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	const TreeSet = __webpack_require__(3);
 
-	const defaultOptions = {minScore:1, maxSolutions: 100, errorCS:-1, onlyCount: false, timeout:20000};
+	const defaultOptions = {minScore:1, maxSolutions: 100, errorCS:-1, onlyCount: false, timeout:20000, condensed:true};
 
 	const DEBUG = false;
 
@@ -412,6 +412,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.onlyCount = options.onlyCount;
 	        this.timeout = options.timeout;
 	        this.MAXERRORSHMBC = 1;
+	        this.condensed = options.condensed;
 
 	        this.timeoutTerminated = 0;
 	        this.score = 0;
@@ -471,24 +472,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }while(this.solutions.isEmpty() && this.lowerBound >= 0.4);
 
 	        //Format the result
+	        this._formatAssignmentOutput();
+
+	        return this.solutions.elements;
+	    }
+
+	    _formatAssignmentOutput(format){
+	        var nSignals = this.spinSystem.signalsArray.length;
+	        var i, j, k;
 	        var assignment = this.solutions.elements;
 	        var nSolutions = this.solutions.length;
 	        for(i = 0; i < nSolutions; i++){
 	            var assignment = this.solutions.elements[i].assignment;
+	            var assignmentNew = {};
 	            for(j = 0; j < nSignals; j++){
 	                var diaIDs = assignment[j];
 	                var tmp = new Array(diaIDs.length);
 	                for(k = 0; k < diaIDs.length; k++){
 	                    tmp[k] = this.spinSystem.diaIDsArray[diaIDs[k]].diaIDs[0];
 	                }
-	                assignment[j] = {signalID : this.spinSystem.signalsArray[j].signalID,
-	                                 delta : Math.round(this.spinSystem.signalsArray[j].signal[0].delta*100)/100,
-	                                 //integral: Math.round(this.spinSystem.signalsArray[j].integral*100)/100,
-	                                 diaID : tmp}
+	                if(this.condensed)
+	                    assignmentNew[this.spinSystem.signalsArray[j].signalID] = tmp;
+	                else{
+	                    assignment[j] = {signalID : this.spinSystem.signalsArray[j].signalID,
+	                        delta : Math.round(this.spinSystem.signalsArray[j].signal[0].delta*100)/100,
+	                        diaID : tmp}
+	                }
 	            }
+	            if(this.condensed)
+	                this.solutions.elements[i].assignment = assignmentNew;
 	        }
-
-	        return this.solutions.elements;
 	    }
 
 	    exploreTreeRec(signals, diaList, indexSignal, indexDia, diaMask, partial) {
