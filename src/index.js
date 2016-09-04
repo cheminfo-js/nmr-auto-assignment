@@ -1,114 +1,121 @@
-'use strict'
 /**
- * Created by acastillo on 1/25/16.
+ * Created by acastillo on 7/5/16.
  */
-function autoassigner(){
-    var timeoutTerminated;
-    var likelihood;
-    var nSolutions=0;
-    const DEBUG = false;
+const SpinSystem = require('./SpinSystem');
+const AutoAssigner = require('./AutoAssigner');
 
-    function exploreTreeRec( signals, diaList, indexSignal, indexDia, diaMask, partial){
-        //If this happens, we can assign this atom group to this signal
-        while(indexDia>=0&&signals[indexSignal]>=diaList[indexDia]){
-            //Force a return if the loop time is longer than the given timeout
-            const d = new Date();
-            if((d.getMilliseconds()-timeStart)>timeout){
-                timeoutTerminated=true;
-                return;
-            }
-            //We can speed up it by checking the chemical shift first
-            if(diaMask[indexDia]&&isWithinCSRange(indexSignal,indexDia)){
-                this.nSteps++;
-                const sizePartial = partial[indexSignal].length;
-                //Assign the atom group to the signal
-                diaMask[indexDia]=false;//Mark this atom group as used
-                partial[indexSignal][sizePartial]=indexDia;//Add the atom group index to the assignment list
-                signals[indexSignal]-=diaList[indexDia];//Subtract the group from signal integral
-                //System.out.println("PartialX "+partial);
-                //If this signal is completely assigned, we should verify all the restrictions
-                if(signals[indexSignal]==0){
-                    let keySum  = accomplishCounts(indexSignal, partial);
-                    //System.out.println("Accomplish count: "+keySum);
-                    if(keySum!=0){
-
-                        //Verify the restrictions. A good solution should give a high likelihood
-                        likelihood = solutionScore(partial, indexSignal, keySum);
-                        if(DEBUG) console.log(likelihood+" "+partial);
-                        if(DEBUG) console.log("likelihood: "+likelihood);
-                        //This is a solution
-                        if(likelihood>0){
-                            if(DEBUG) console.log(likelihood+" "+partial);
-                            //var solution =  {assignment:[],likelihood:likelihood};
-                            if(indexSignal==0){//We found a new solution
-                                nSolutions++;
-                                var solution = {assignment:partial, likelihood:likelihood};
-                                //solution.setResult(new JSONArray(partial.toString()), likelihood);
-                                //System.out.println(likelihood+" "+partial);
-                                //dady.addChild(new SolutionTree(solution));
-                                if (solutions.length>=maxSolutions) {
-                                    //System.out.println("Solution "+solutions.size()+" "+solutions.last().likelihood);
-                                    if (likelihood>solutions[solutions.length-1].likelihood) {
-                                        //System.out.println(likelihood+" "+partial);
-                                        solutions.pop();
-                                        insert(solution, solutions);
-                                    }
-                                } else {
-                                    insert(solution, solutions);
-                                }
-                                //System.out.println(solutions);
-                            }
-                            else{
-                                //Each new signal that we assign will produce a new level on the tree.
-                                indexSignal--;//Lets go forward with the next signal
-                                indexDia=diaList.length;
-                                while(!diaMask[--indexDia]);
-                                //SolutionTree newLevel = new SolutionTree(solution);
-                                exploreTreeRec(signals, diaList,indexSignal, indexDia, diaMask, partial);
-                                //exploreTreeRec(signals, diaList,indexSignal, indexDia, diaMask, newLevel,partial);
-                                //dady.addChild(newLevel);
-                                indexSignal++;
-                            }
-                        }
-                    }
-
-                }
-                else{
-                    //System.out.println("Still assinging "+indexSignal);
-                    //It says that the signal should be assigned by combining 2 or more signals
-                    const previousIndexDia = indexDia;
-                    while(indexDia>0&&!diaMask[--indexDia]);
-                    if(indexDia>=0)
-                        exploreTreeRec(signals, diaList,indexSignal, indexDia, diaMask, partial);
-                    indexDia = previousIndexDia;
-                    //return
-                }
-                //Deallocate this atom group to try the next one.
-                indexDia=partial[indexSignal].splice(sizePartial,1);//Add the atom group index to the assignment list
-                diaMask[indexDia]=true;//Mark this atom group as available
-                //System.out.println("After remove "+partial);
-                signals[indexSignal]+=diaList[indexDia];//Subtract the group from signal integral
-                likelihoods[indexSignal]=1;//-1
-            }//[[4,3,1],[0],[2]]
-            indexDia--;
-        }
+function autoAssign(entry, options){
+    if(entry.spectra.h1PeakList){
+        return assignmentFromPeakPicking(entry, options);
     }
-
-    function insert(element, array) {
-        array.splice(locationOf(element, array) + 1, 0, element);
-        return array;
+    else{
+        return assignmentFromRaw(entry, options);
     }
-
-    function locationOf(element, array, start, end) {
-        start = start || 0;
-        end = end || array.length;
-        var pivot = parseInt(start + (end - start) / 2, 10);
-        if (end-start <= 1 || array[pivot].likelihood === element.likelihood) return pivot;
-        if (array[pivot].likelihood < element) {
-            return locationOf(element, array, pivot, end);
-        } else {
-            return locationOf(element, array, start, pivot);
-        }
-    }
-
 }
+
+function assignmentFromRaw(entry, options){
+    var molfile = entry.molfile;
+    var spectra = entry.spectra;
+
+    var molecule=ACT.load(molfile);
+
+    molecule.expandHydrogens();
+
+    entry.molecule = molecule;
+    entry.diaIDs = molecule.getDiastereotopicAtomIDs();
+
+    //Simulate and process the 1H-NMR spectrum at 400MHz
+    var jcampFile = molFiles[i].replace("mol_","h1_").replace(".mol",".jdx");
+    var spectraData1H = SD.load(spectra.h1);//
+
+
+    var signals = spectraData1H.nmrPeakDetection({nStddev:3, baselineRejoin:5, compute:false});
+    spectra.solvent = spectraData1H.getParamString(".SOLVENT NAME", "unknown");
+    entry.diaID = molecule.toIDCode();
+
+    signals = integration(signals, molecule.countAtom("H"));
+
+    for(var j=0;j< signals.length;j++){
+        signals[j]._highlight=[-(j+1)];
+    }
+
+    spectra.h1PeakList = signals;
+
+    return assignmentFromPeakPicking(entry,options);
+}
+
+function assignmentFromPeakPicking(entry, options) {
+    const predictor = options.predictor;
+    var molecule, diaIDs, molfile;
+
+    var spectra = entry.spectra;
+    if(!entry.molecule) {
+        molecule=ACT.load(entry.molfile);
+        molecule.expandHydrogens();
+        diaIDs=molecule.getDiastereotopicAtomIDs();
+
+        for (var j = 0; j < diaIDs.length; j++) {
+            diaIDs[j].nbEquivalent=diaIDs[j].atoms.length;
+        }
+
+        diaIDs.sort(function(a,b) {
+            if (a.element == b.element) {
+                return b.nbEquivalent-a.nbEquivalent;
+            }
+            return a.element<b.element?1:-1;
+        });
+        entry.molecule = molecule;
+        entry.diaIDs = diaIDs;
+        entry.diaID = molecule.toIDCode();
+    }
+    else {
+        molecule = entry.molecule;
+        diaIDs = entry.diaIDs;
+    }
+
+    //H1 prediction
+    var h1pred = predictor.predict(molecule, {group:true});
+    if(!h1pred || h1pred.length === 0)
+        return null;
+
+    var optionsError = {iteration:options.iteration || 1, learningRatio:options.learningRatio || 1};
+
+    for (var j=0; j<h1pred.length; j++) {
+        h1pred[j].error = getError(h1pred[j], optionsError);
+    }
+
+    h1pred.sort(function(a,b) {
+        if (a.atomLabel==b.atomLabel) {
+            return b.integral-a.integral;
+        }
+        return a.atomLabel<b.atomLabel?1:-1;
+    });
+
+    try{
+        const spinSystem = new SpinSystem(h1pred, spectra.h1PeakList);
+        const autoAssigner = new AutoAssigner(spinSystem, {minScore:1 ,maxSolutions:3000, errorCS:-1});
+        return autoAssigner.getAssignments();
+    }
+    catch(e){
+        console.log("Could not assign this molecule.");
+        return null;
+    }
+}
+
+function  getError(prediction, param){
+    //console.log(prediction)
+    //Never use predictions with less than 3 votes
+    if(prediction.std==0||prediction.ncs<3){
+        return 20;
+    }
+    else{
+        //factor is between 1 and +inf
+        //console.log(prediction.ncs+" "+(param.iteration+1)+" "+param.learningRatio);
+        var factor = 3*prediction.std/
+            (Math.pow(prediction.ncs,(param.iteration+1)*param.learningRatio));//(param.iteration+1)*param.learningRatio*h1pred[indexSignal].ncs;
+        return 3*prediction.std+factor;
+    }
+    return 20;
+}
+
+module.exports = autoAssign;

@@ -1,5 +1,5 @@
 {
-  "name": "nmr-auto-assignmnet",
+  "name": "nmr-auto-assignment",
   "version": "0.0.1",
   "description": "Automatic assignment for Nuclear Magnetic Resonance spectra for small molecules ",
   "keywords": [
@@ -10,11 +10,11 @@
     "molecules"
   ],
   "author": "Andres Castillo",
-  "repository": "cheminfo-js/nmr-auto-assignmnet",
+  "repository": "cheminfo-js/nmr-auto-assignment",
   "bugs": {
-    "url": "https://github.com/cheminfo-js/nmr-auto-assignmnet/issues"
+    "url": "https://github.com/cheminfo-js/nmr-auto-assignment/issues"
   },
-  "homepage": "https://github.com/cheminfo-js/nmr-auto-assignmnet",
+  "homepage": "https://github.com/cheminfo-js/nmr-auto-assignment",
   "license": "MIT",
   "main": "./src/index.js",
   "directories": {
@@ -23,21 +23,20 @@
   },
   "scripts": {
     "test": "mocha --require should --reporter mocha-better-spec-reporter --recursive",
-    "build": "cheminfo build"
+    "build": "cheminfo build --no-uglify"
   },
   "devDependencies": {
-    "cheminfo-tools": "^1.0.2",
-    "mocha": "^2.2.5",
-    "mocha-better-spec-reporter": "^2.1.1",
-    "should": "^7.0.2",
-    "spectra-data":"^1.7.6",
-    "openchemlib-extended":"1.5.0"
+    "cheminfo-tools": "^1.9.0",
+    "mocha": "^3.0.2",
+    "mocha-better-spec-reporter": "^3.0.2",
+    "should": "^11.1.0"
   },
   "dependencies": {
-    "ml-stat": "^1.0.1",
-    "ml-matrix": "^0.1.0",
-    "ml-gsd": "0.1.0",
-    "ml-fft": "1.0.5",
-    "extend": "^3.0.0"
+    "ml-stat": "^1.3.3",
+    "ml-matrix": "^2.0.0",
+    "nmr-predictor":"0.0.4",
+    "openchemlib-extended":"1.9.1",
+    "spectra-data":"^1.7.10",
+    "ml-tree-set":"0.1.1"
   }
 }

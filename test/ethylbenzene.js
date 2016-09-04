@@ -22,8 +22,8 @@ function loadFile(filename){
 }
 
 
-describe('Auto-assignment ethylvinylether', function () {
-    var molfile = loadFile("/data/ethylvinylether/structure.mol");
+describe('Auto-assignment ethylbenzene', function () {
+    var molfile = loadFile("/data/ethylbenzene/mol_0.mol");
     var molecule = OCLE.Molecule.fromMolfile(molfile);
     molecule.addImplicitHydrogens();
     var nH = molecule.getMolecularFormula().formula.replace(/.*H([0-9]+).*/,"$1")*1;
@@ -40,7 +40,7 @@ describe('Auto-assignment ethylvinylether', function () {
     //var diaID = molecule.getIDCode();
     const predictor = new Predictor(JSON.parse(loadFile("/../src/h1_database.json")));
 
-    var spectrum = createSpectraData("/data/ethylvinylether/1h.jdx");
+    var spectrum = createSpectraData("/data/ethylbenzene/z1h_0.jdx");
     var peakPicking = spectrum.nmrPeakDetection({
         "nH": nH,
         realTop: true,
@@ -52,9 +52,9 @@ describe('Auto-assignment ethylvinylether', function () {
     });
     //console.log(peakPicking);
     //console.log("PP", spectrum.sd.spectra[0].data);
-    it('Known patterns for ethylvinylether', function () {
+    it('Known patterns for ethylbenzene', function () {
         var result = autoassigner({molecule:molecule, diaIDs:diaIDs,
-                spectra:{h1PeakList:peakPicking, solvent:spectrum.getParamString(".SOLVENT NAME", "unknown")}},
+            spectra:{h1PeakList:peakPicking, solvent:spectrum.getParamString(".SOLVENT NAME", "unknown")}},
             {predictor:predictor}
         );
         console.log(JSON.stringify(result));
