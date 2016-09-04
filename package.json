@@ -1,6 +1,6 @@
 {
   "name": "nmr-auto-assignment",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Automatic assignment for Nuclear Magnetic Resonance spectra for small molecules ",
   "keywords": [
     "NMR",
@@ -34,9 +34,9 @@
   "dependencies": {
     "ml-stat": "^1.3.3",
     "ml-matrix": "^2.0.0",
-    "nmr-predictor":"0.0.4",
-    "openchemlib-extended":"1.9.1",
-    "spectra-data":"^1.7.10",
-    "ml-tree-set":"0.1.1"
+    "nmr-predictor": "0.0.4",
+    "openchemlib-extended": "1.9.1",
+    "spectra-data": "^1.7.10",
+    "ml-tree-set": "0.1.1"
   }
 }
