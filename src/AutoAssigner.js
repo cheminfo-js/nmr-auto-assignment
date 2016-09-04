@@ -90,6 +90,7 @@ class Assignment{
         var nSolutions = this.solutions.length;
         for(i = 0; i < nSolutions; i++){
             var assignment = this.solutions.elements[i].assignment;
+            this.solutions.elements[i].index = i+"";
             var assignmentNew = {};
             for(j = 0; j < nSignals; j++){
                 var diaIDs = assignment[j];
