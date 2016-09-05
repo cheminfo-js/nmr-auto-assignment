@@ -60,7 +60,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	const SpinSystem = __webpack_require__(1);
 	const AutoAssigner = __webpack_require__(2);
 	const OCLE = __webpack_require__(4);
-
+	const DEBUG = false;
 
 	function autoAssign(entry, options) {
 	    if(entry.spectra.h1PeakList){
@@ -189,7 +189,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * Created by acastillo on 9/2/16.
 	 */
 	'use strict'
-	const DEBUG  = true;
+	const DEBUG  = false;
 	class SpinSystem {
 	    constructor(diaIDsArray, signalsArray, opt){
 	        var options = Object.assign({}, opt);
@@ -214,7 +214,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        var signals1D = this.signalsArray;
 	        var nH = 0, nC = 0, i = 0;
-
 	        try {
 	            this.chemicalShiftsT = new Array(nDiaIds);
 	            this.chemicalShiftsTError = new Array(nDiaIds);
@@ -249,6 +248,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                windowH.push(Math.abs(from-to));
 	                this.signalsWidth[i] = Math.abs(from-to);
 	            }
+
 	            //System.out.println(diaIDsH.size());
 	            //var row,col;
 
@@ -488,6 +488,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var nSolutions = this.solutions.length;
 	        for(i = 0; i < nSolutions; i++){
 	            var assignment = this.solutions.elements[i].assignment;
+	            this.solutions.elements[i].index = i+"";
 	            var assignmentNew = {};
 	            for(j = 0; j < nSignals; j++){
 	                var diaIDs = assignment[j];
@@ -533,7 +534,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        //Verify the restrictions. A good solution should give a high score
 	                        this.score = this._solutionScore(partial, indexSignal, keySum);
 	                        if(DEBUG) console.log(this.score+" "+partial);
-	                        if(DEBUG) console.log("score: "+this.score);
 	                        //This is a solution
 	                        if(this.score>0){
 	                            if(indexSignal == 0){//We found a new solution
