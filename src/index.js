@@ -4,7 +4,7 @@
 const SpinSystem = require('./SpinSystem');
 const AutoAssigner = require('./AutoAssigner');
 const OCLE = require("openchemlib-extended");
-
+const DEBUG = true;
 
 function autoAssign(entry, options) {
     if(entry.spectra.h1PeakList){
@@ -71,6 +71,7 @@ function assignmentFromPeakPicking(entry, options) {
         entry.molecule = molecule;
         entry.diaIDs = diaIDs;
         entry.diaID = molecule.getIDCode();
+        if(DEBUG) console.log("In assignmentFromPeakPicking loading molecule");
     }
     else {
         molecule = entry.molecule;
@@ -96,6 +97,7 @@ function assignmentFromPeakPicking(entry, options) {
     });
 
     try{
+        console.log("Going to assing");
         const spinSystem = new SpinSystem(h1pred, spectra.h1PeakList);
         const autoAssigner = new AutoAssigner(spinSystem, options);
         return autoAssigner.getAssignments();

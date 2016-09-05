@@ -6,7 +6,7 @@ const TreeSet = require("ml-tree-set");
 
 const defaultOptions = {minScore:1, maxSolutions: 100, errorCS:-1, onlyCount: false, timeout:20000, condensed:true};
 
-const DEBUG = false;
+const DEBUG = true;
 
 class Assignment{
     constructor(spinSystem, opt){
