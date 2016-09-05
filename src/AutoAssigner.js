@@ -6,7 +6,7 @@ const TreeSet = require("ml-tree-set");
 
 const defaultOptions = {minScore:1, maxSolutions: 100, errorCS:-1, onlyCount: false, timeout:20000, condensed:true};
 
-const DEBUG = true;
+const DEBUG = false;
 
 class Assignment{
     constructor(spinSystem, opt){
@@ -136,7 +136,6 @@ class Assignment{
                         //Verify the restrictions. A good solution should give a high score
                         this.score = this._solutionScore(partial, indexSignal, keySum);
                         if(DEBUG) console.log(this.score+" "+partial);
-                        if(DEBUG) console.log("score: "+this.score);
                         //This is a solution
                         if(this.score>0){
                             if(indexSignal == 0){//We found a new solution

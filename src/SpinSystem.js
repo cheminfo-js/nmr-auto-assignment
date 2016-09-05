@@ -2,7 +2,7 @@
  * Created by acastillo on 9/2/16.
  */
 'use strict'
-const DEBUG  = true;
+const DEBUG  = false;
 class SpinSystem {
     constructor(diaIDsArray, signalsArray, opt){
         var options = Object.assign({}, opt);
@@ -27,7 +27,6 @@ class SpinSystem {
 
         var signals1D = this.signalsArray;
         var nH = 0, nC = 0, i = 0;
-        if(DEBUG) console.log("In spinSystem");
         try {
             this.chemicalShiftsT = new Array(nDiaIds);
             this.chemicalShiftsTError = new Array(nDiaIds);
@@ -62,7 +61,6 @@ class SpinSystem {
                 windowH.push(Math.abs(from-to));
                 this.signalsWidth[i] = Math.abs(from-to);
             }
-            if(DEBUG) console.log("In spinSystem 2");
 
             //System.out.println(diaIDsH.size());
             //var row,col;
