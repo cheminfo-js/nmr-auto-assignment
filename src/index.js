@@ -82,6 +82,7 @@ function assignmentFromPeakPicking(entry, options) {
     if(!h1pred || h1pred.length === 0)
         return null;
 
+    //console.log(h1pred);
     var optionsError = {iteration:options.iteration || 1, learningRatio:options.learningRatio || 1};
 
     for (var j=0; j<h1pred.length; j++) {
@@ -96,7 +97,9 @@ function assignmentFromPeakPicking(entry, options) {
     });
 
     try{
+        spectra.h1PeakList.sort(function(a, b ){ return b.integral - a.integral });
         const spinSystem = new SpinSystem(h1pred, spectra.h1PeakList);
+        //console.log(spinSystem);
         const autoAssigner = new AutoAssigner(spinSystem, options);
         return autoAssigner.getAssignments();
     }

@@ -128,7 +128,7 @@ class Assignment{
                 diaMask[indexDia] = false;//Mark this atom group as used
                 partial[indexSignal][sizePartial] = indexDia;//Add the atom group index to the assignment list
                 signals[indexSignal] -= diaList[indexDia];//Subtract the group from signal integral
-                //If this signal is completely assigned, we should verify all the restrictions
+                //If this signal is completely assigned, we have to verify all the restrictions
                 if(signals[indexSignal] == 0){
                     let keySum  = this._accomplishCounts(indexSignal, partial);
                     //System.out.println("Accomplish count: "+keySum);
