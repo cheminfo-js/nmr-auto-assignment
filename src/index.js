@@ -78,7 +78,7 @@ function assignmentFromPeakPicking(entry, options) {
     }
 
     //H1 prediction
-    var h1pred = predictor.predict(molecule, {group:true});
+    var h1pred = predictor.predict(molecule, {group:true, ignoreLabile: false});
     if(!h1pred || h1pred.length === 0)
         return null;
 
@@ -99,7 +99,7 @@ function assignmentFromPeakPicking(entry, options) {
     try{
         spectra.h1PeakList.sort(function(a, b ){ return b.integral - a.integral });
         const spinSystem = new SpinSystem(h1pred, spectra.h1PeakList);
-        //console.log(spinSystem);
+        console.log(spinSystem);
         const autoAssigner = new AutoAssigner(spinSystem, options);
         return autoAssigner.getAssignments();
     }

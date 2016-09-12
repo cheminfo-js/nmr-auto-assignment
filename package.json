@@ -34,7 +34,7 @@
   "dependencies": {
     "ml-stat": "^1.3.3",
     "ml-matrix": "^2.0.0",
-    "nmr-predictor": "0.0.4",
+    "nmr-predictor": "0.0.5",
     "openchemlib-extended": "1.9.1",
     "spectra-data": "^1.7.10",
     "ml-tree-set": "0.1.1"

@@ -6,7 +6,7 @@ const TreeSet = require("ml-tree-set");
 
 const defaultOptions = {minScore:1, maxSolutions: 100, errorCS:-1, onlyCount: false, timeout:20000, condensed:true};
 
-const DEBUG = false;
+const DEBUG = true;
 
 class Assignment{
     constructor(spinSystem, opt){
@@ -131,7 +131,7 @@ class Assignment{
                 //If this signal is completely assigned, we have to verify all the restrictions
                 if(signals[indexSignal] == 0){
                     let keySum  = this._accomplishCounts(indexSignal, partial);
-                    //System.out.println("Accomplish count: "+keySum);
+                    if(DEBUG) console.log("Accomplish count: "+keySum);
                     if(keySum != 0){
                         //Verify the restrictions. A good solution should give a high score
                         this.score = this._solutionScore(partial, indexSignal, keySum);
@@ -191,11 +191,11 @@ class Assignment{
                 return true;
             var cfAtoms = this.spinSystem.chemicalShiftsT[indexDia];
 
-            if(cfAtoms==-9999999)
+            if(cfAtoms == -9999999)
                 return true;
             var cfSignal = this.spinSystem.chemicalShiftsE[indexSignal];
             var error = this.spinSystem.chemicalShiftsTError[indexDia];
-            if(error === 0)
+            if(error < Math.abs(this.errorCS))
                 error = this.errorCS;
 
             var csError = Math.abs(this.spinSystem.signalsWidth[indexSignal]/2.0+Math.abs(error));
