@@ -134,7 +134,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    //H1 prediction
-	    var h1pred = predictor.predict(molecule, {group:true});
+	    var h1pred = predictor.predict(molecule, {group:true, ignoreLabile: false});
 	    if(!h1pred || h1pred.length === 0)
 	        return null;
 
@@ -430,7 +430,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.solutions = null;
 
 	        this.comparator = function(a, b){
-	            return a.score - b.score;
+	            return b.score - a.score;
 	        }
 	    }
 
@@ -532,7 +532,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                //If this signal is completely assigned, we have to verify all the restrictions
 	                if(signals[indexSignal] == 0){
 	                    let keySum  = this._accomplishCounts(indexSignal, partial);
-	                    //System.out.println("Accomplish count: "+keySum);
+	                    if(DEBUG) console.log("Accomplish count: "+keySum);
 	                    if(keySum != 0){
 	                        //Verify the restrictions. A good solution should give a high score
 	                        this.score = this._solutionScore(partial, indexSignal, keySum);
@@ -592,11 +592,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                return true;
 	            var cfAtoms = this.spinSystem.chemicalShiftsT[indexDia];
 
-	            if(cfAtoms==-9999999)
+	            if(cfAtoms == -9999999)
 	                return true;
 	            var cfSignal = this.spinSystem.chemicalShiftsE[indexSignal];
 	            var error = this.spinSystem.chemicalShiftsTError[indexDia];
-	            if(error === 0)
+	            if(error < Math.abs(this.errorCS))
 	                error = this.errorCS;
 
 	            var csError = Math.abs(this.spinSystem.signalsWidth[indexSignal]/2.0+Math.abs(error));
