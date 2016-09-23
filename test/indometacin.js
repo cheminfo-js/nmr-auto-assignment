@@ -53,12 +53,12 @@ describe('Auto-assignment indometacin', function () {
         format:"new"
     });
 
-    it.only('Known patterns for indometacin', function () {
+    it('Known patterns for indometacin', function () {
         var result = autoassigner({molecule:molecule, diaIDs:diaIDs,
             spectra:{h1PeakList:peakPicking, solvent:spectrum.getParamString(".SOLVENT NAME", "unknown")}},
-            {minScore: 0.8, maxSolutions:3000, errorCS: 100, predictor: predictor, condensed:true}
+            {minScore: 0.8, maxSolutions:3000, errorCS: 5, predictor: predictor, condensed:true}
         );
-        console.log(JSON.stringify(result.length));
+        //console.log(JSON.stringify(result.length));
     });
 
     it('condensed for indometacin', function () {
@@ -74,6 +74,7 @@ describe('Auto-assignment indometacin', function () {
                 spectra:{h1PeakList:peakPicking, solvent:spectrum.getParamString(".SOLVENT NAME", "unknown")}},
             {minScore:1 ,maxSolutions:3000, errorCS:0 , predictor: predictor, condensed:true}
         );
+        result.length.should.greaterThan(1);
         //console.log(JSON.stringify(result));
     });
 });

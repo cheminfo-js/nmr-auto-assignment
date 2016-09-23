@@ -6,7 +6,7 @@ const TreeSet = require("ml-tree-set");
 
 const defaultOptions = {minScore:1, maxSolutions: 100, errorCS:-1, onlyCount: false, timeout:20000, condensed:true};
 
-const DEBUG = true;
+const DEBUG = false;
 
 class Assignment{
     constructor(spinSystem, opt){
@@ -29,7 +29,7 @@ class Assignment{
         this.solutions = null;
 
         this.comparator = function(a, b){
-            return a.score - b.score;
+            return b.score - a.score;
         }
     }
 

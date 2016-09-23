@@ -70,7 +70,7 @@ describe('Auto-assignment ethylbenzene', function () {
     it('condensed for ethylbenzene from molfile', function () {
         var result = autoassigner({molfile: molfile,
                 spectra:{h1PeakList:peakPicking, solvent:spectrum.getParamString(".SOLVENT NAME", "unknown")}},
-            {minScore:1 ,maxSolutions:3000, errorCS:-1 , predictor: predictor, condensed:true}
+            {minScore:1 ,maxSolutions:1, errorCS:1 , predictor: predictor, condensed:true}
         );
         //console.log(JSON.stringify(result));
     });
