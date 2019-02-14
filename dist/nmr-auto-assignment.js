@@ -1,6 +1,6 @@
 /**
  * nmr-auto-assignment - Automatic assignment for Nuclear Magnetic Resonance spectra for small molecules 
- * @version v0.3.0
+ * @version v0.3.1
  * @link https://github.com/cheminfo-js/nmr-auto-assignment
  * @license MIT
  */
