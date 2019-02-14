@@ -1,6 +1,6 @@
 {
   "name": "nmr-auto-assignment",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Automatic assignment for Nuclear Magnetic Resonance spectra for small molecules ",
   "keywords": [
     "NMR",
