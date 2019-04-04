@@ -1,6 +1,6 @@
 {
   "name": "nmr-auto-assignment",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Automatic assignment for Nuclear Magnetic Resonance spectra for small molecules ",
   "keywords": [
     "NMR",
@@ -26,7 +26,7 @@
     "build": "cheminfo build --no-uglify"
   },
   "devDependencies": {
-    "cheminfo-tools": "^1.22.4",
+    "cheminfo-tools": "^1.23.2",
     "mocha": "^3.5.3",
     "mocha-better-spec-reporter": "^3.1.0",
     "should": "^11.2.1"
